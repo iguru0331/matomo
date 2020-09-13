@@ -1,0 +1,11 @@
+- name: install httpd
+  yum:
+    name: httpd
+    update_cache: yes
+    state: latest
+
+- name: start httpd
+  service:
+    name: httpd
+    enabled: yes
+    state: started

@@ -1,0 +1,37 @@
+- name: remove mariadb-lib
+  yum:
+    state: absent
+    name: mariadb-libs
+
+- name: install mysql-repo
+  yum:
+    name: http://dev.mysql.com/get/{{ mysql.ver }}-community-release-el7-7.noarch.rpm 
+    state: present
+
+- name: install mysql
+  yum:
+    name: "{{ item }}"
+    state: latest
+    enablerepo: "{{ mysql.ver }}-community"
+  with_items:
+    - mysql-community-client
+    - mysql-community-server
+    - mysql-community-common
+    - mysql-community-libs
+
+- name: start mysqld
+  service:
+    name: mysqld
+    enabled: yes
+    state: started
+
+- name: change root password
+  mysql_user:
+    login_user: root
+    login_passowrd: matomo
+    name: vagrant
+    password: vagrant
+    check_implicit_admin: yes
+    state: present
+
+
