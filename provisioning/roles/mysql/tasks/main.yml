@@ -5,33 +5,52 @@
 
 - name: install mysql-repo
   yum:
-    name: http://dev.mysql.com/get/{{ mysql.ver }}-community-release-el7-7.noarch.rpm 
+    name: http://dev.mysql.com/get/{{ install_mysql.ver }}-community-release-el7-7.noarch.rpm 
     state: present
 
 - name: install mysql
   yum:
-    name: "{{ item }}"
-    state: latest
-    enablerepo: "{{ mysql.ver }}-community"
-  with_items:
-    - mysql-community-client
-    - mysql-community-server
-    - mysql-community-common
-    - mysql-community-libs
+    name: "{{ install_mysql.install_products }}"
+    state: present
+    enablerepo: "{{ install_mysql.ver }}-community"
 
-- name: start mysqld
+- name: start mysqld      
   service:
     name: mysqld
     enabled: yes
     state: started
 
+- name: deploy .my.cnf
+  template:
+    src: templates/my.cnf
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+
+- name: get temp password
+  shell: cat /var/log/mysqld.log | grep "temporary password" | awk '{print $11}'
+  register: mysql_tmp_password
+  failed_when: no
+
 - name: change root password
+  shell: 
+    mysql -u root --password='{{ mysql_tmp_password.stdout }}' --connect-expired-password -e "set password for root@'localhost'=password('{{ install_mysql.root_password }}');"
+  failed_when: no
+
+- name: create db
+  mysql_db:
+      login_user: "root"
+      login_password: "{{ install_mysql.root_password }}"
+      name: "{{ install_mysql.db_name }}"
+      state: present
+      encoding: utf8mb4
+
+- name: add matomo user
+  no_log: true
   mysql_user:
-    login_user: root
-    login_passowrd: matomo
-    name: vagrant
-    password: vagrant
-    check_implicit_admin: yes
+    login_user: "root"
+    login_password: "{{ install_mysql.root_password }}"
+    name: "{{ install_mysql.db_username }}"
+    password: "{{ install_mysql.db_password }}"
+    priv: '{{ install_mysql.db_name }}.*:ALL'
     state: present
-
-

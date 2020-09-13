@@ -11,6 +11,6 @@
 
 - name: install php
   yum:
-    name: "{{ install_php.install_product }}"
+    name: "{{ install_php.install_products }}"
     state: present
     enablerepo: "remi,remi-{{ install_php.ver }}"

@@ -2,11 +2,10 @@
 - hosts: vagrant
   become: true
   user: vagrant
-#  gather_facts: no
   vars:
     install_php:
       ver: php74
-      install_product:
+      install_products:
         - php
         - php-curl
         - php-gd
@@ -14,32 +13,38 @@
         - php-mysql
         - php-xml
         - php-mbstring
-
     install_mysql:
       ver: mysql57
-
-
+      install_products:
+        - mysql-community-client
+        - mysql-community-server
+        - mysql-community-common
+        - mysql-community-libs
+        - mysql-community-libs-compat
+        - MySQL-python
+      root_password: Vagrant@1
+      db_username: matomo
+      db_password: Vagrant@1
+      db_name: matomo
   roles:
-#     - yum_update
+    - yum_update
     - php
-#    - apache
-#    - mysql
+    - apache
+    - mysql
   tasks:
-#    - name: install package
-#      yum:
-#        name: "{{ items }}"
-#        state: latest
-#      vars:
-#        items:
-#          - unzip
-
-#    - name: download and unzip matomo
-#      unarchive:
-#        src: https://builds.matomo.org/matomo-3.14.1.zip
-#        dest: /var/www/html
-#        remote_src: yes
-#        owner: apache
-#        group: apache
-#
-#    - name: disable SELinux
-#      selinux: state=disabled
+    - name: install package
+      yum:
+        name: "{{ items }}"
+        state: latest
+      vars:
+        items:
+          - unzip
+    - name: download and unzip matomo
+      unarchive:
+        src: https://builds.matomo.org/matomo-3.14.1.zip
+        dest: /var/www/html
+        remote_src: yes
+        owner: apache
+        group: apache
+    - name: disable SELinux
+      selinux: state=disabled
