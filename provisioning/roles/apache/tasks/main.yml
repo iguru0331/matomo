@@ -1,9 +1,20 @@
+# Apacheインストール
 - name: install httpd
   yum:
     name: httpd
     update_cache: yes
     state: latest
 
+# テストページ作成
+- name: upload testpage
+  template:
+    src: test.html
+    dest: /var/www/html/test.html
+    owner: apache
+    group: apache
+    mode: 0755 
+
+# Apache起動、自動起動設定
 - name: start httpd
   service:
     name: httpd

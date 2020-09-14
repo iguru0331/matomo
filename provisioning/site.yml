@@ -3,8 +3,11 @@
   become: true
   user: vagrant
   vars:
+    # PHP情報
     install_php:
+      # PHPバージョン
       ver: php74
+      # インストールPHPパッケージ
       install_products:
         - php
         - php-curl
@@ -13,8 +16,12 @@
         - php-mysql
         - php-xml
         - php-mbstring
+
+    # MySQL情報
     install_mysql:
+      # MySQLバージョン
       ver: mysql57
+      # インストールMySQLパッケージ
       install_products:
         - mysql-community-client
         - mysql-community-server
@@ -22,29 +29,37 @@
         - mysql-community-libs
         - mysql-community-libs-compat
         - MySQL-python
+      # 特権パスワード
       root_password: Vagrant@1
+      # 作成ユーザ名
       db_username: matomo
+      # 作成ユーザパスワード
       db_password: Vagrant@1
+      # 作成DB
       db_name: matomo
+
+    # Ruby情報
+    install_ruby:
+      # Rubyバージョン
+      ver: 2.7.1
+      # インストールRuby前提パッケージ
+      install_products:
+        - git
+        - bzip2
+        - gcc
+        - openssl-devel
+        - readline-devel
+        - zlib-devel
+      # インストールgemパッケージ
+      install_gem_products:
+        - apache-loggen
+
+  # ロール
   roles:
-    - yum_update
+    - common
     - php
     - apache
     - mysql
-  tasks:
-    - name: install package
-      yum:
-        name: "{{ items }}"
-        state: latest
-      vars:
-        items:
-          - unzip
-    - name: download and unzip matomo
-      unarchive:
-        src: https://builds.matomo.org/matomo-3.14.1.zip
-        dest: /var/www/html
-        remote_src: yes
-        owner: apache
-        group: apache
-    - name: disable SELinux
-      selinux: state=disabled
+    - matomo
+    # apache-loggen利用するためRubyインストール
+    - ruby

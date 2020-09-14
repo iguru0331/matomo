@@ -1,0 +1,41 @@
+# 前提パッケージインストール
+- name: install package
+  yum:
+    name: "{{ install_ruby.install_products }}"
+    state: latest
+
+# rbenvインストール
+- name: install rbenv
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: /usr/local/rbenv
+
+# ruby-buildインストール
+- name: install ruby-build
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: /usr/local/rbenv/plugins/ruby-build
+
+# rbenv用環境変数設定
+- name: install rbenv path
+  template:
+    src: rbenv.sh
+    dest: /etc/profile.d/rbenv.sh
+    owner: root
+    group: root
+    mode: 0755 
+
+# Rubyインストール
+- name: install ruby
+  shell: |
+    bash -lc "rbenv install {{ install_ruby.ver }}"
+    bash -lc "rbenv global {{ install_ruby.ver }}"
+
+# gemパッケージインストール
+- name: install gem package
+  gem:
+    name: "{{ item }}"
+    state: latest
+    user_install: no
+    executable: /usr/local/rbenv/shims/gem
+  with_items: "{{ install_ruby.install_gem_products }}"

@@ -4,18 +4,16 @@
 # コンフィグ関数
 def ConfigCentosEasy(config , hostname , ip)
   config.vm.define hostname do |node|
-    # ホスト名、IPアドレス(ブリッジ接続)
+    # ホスト名
     node.vm.hostname = hostname
+    # IPアドレス(プライベート接続)
     node.vm.network "private_network", ip: ip
-#    node.vm.network "public_network", ip: ip
+    # IPアドレス(ブリッジ接続)
+    # node.vm.network "public_network", ip: ip
     # 起動時実行コマンド
       # - タイムゾーンを日本に設定
-      # - パスワード認証有効化(鍵不要)
-      # - sshd_config変更に伴うsshd再起動
     node.vm.provision "shell", inline: <<-SHELL
       timedatectl set-timezone Asia/Tokyo
-#      sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config
-#      systemctl restart sshd
       SHELL
   end
 
@@ -30,7 +28,7 @@ end
 # 本処理
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
-  # vagrants
+  # vagrant
   ConfigCentosEasy(config, "vagrant" , "192.168.22.11")
 
   # Ansibleによるプロビジョニング
@@ -39,7 +37,7 @@ Vagrant.configure("2") do |config|
     ansible.limit = 'all'
   end
 
-  # 再起動
+  # 再起動(SELinux無効反映のため)
   config.vm.provision "reload"
 
 end

@@ -1,42 +1,42 @@
+# MariaDBアンインストール
 - name: remove mariadb-lib
   yum:
     state: absent
     name: mariadb-libs
 
+# MySQLリポジトリインストール
 - name: install mysql-repo
   yum:
     name: http://dev.mysql.com/get/{{ install_mysql.ver }}-community-release-el7-7.noarch.rpm 
     state: present
 
+# MySQLインストール
 - name: install mysql
   yum:
     name: "{{ install_mysql.install_products }}"
     state: present
     enablerepo: "{{ install_mysql.ver }}-community"
 
+# MySQL起動、自動起動設定
 - name: start mysqld      
   service:
     name: mysqld
     enabled: yes
     state: started
 
-- name: deploy .my.cnf
-  template:
-    src: templates/my.cnf
-    dest: /root/.my.cnf
-    owner: root
-    group: root
-
+# rootユーザパスワード取得
 - name: get temp password
   shell: cat /var/log/mysqld.log | grep "temporary password" | awk '{print $11}'
   register: mysql_tmp_password
   failed_when: no
 
+# rootパスワード設定
 - name: change root password
   shell: 
     mysql -u root --password='{{ mysql_tmp_password.stdout }}' --connect-expired-password -e "set password for root@'localhost'=password('{{ install_mysql.root_password }}');"
   failed_when: no
 
+# matomo用DB作成
 - name: create db
   mysql_db:
       login_user: "root"
@@ -45,6 +45,7 @@
       state: present
       encoding: utf8mb4
 
+# matomo用ユーザ作成
 - name: add matomo user
   no_log: true
   mysql_user:

@@ -1,0 +1,18 @@
+# unzipインストール
+- name: install package
+  yum:
+    name: unzip
+    state: latest
+
+# matomoインストール
+- name: download and unzip matomo
+  unarchive:
+    src: https://builds.matomo.org/matomo-3.14.1.zip
+    dest: /var/www/html
+    remote_src: yes
+    owner: apache
+    group: apache
+
+# SELinux無効(要再起動)
+- name: disable SELinux
+  selinux: state=disabled
