@@ -21,6 +21,7 @@
     install_mysql:
       # MySQLバージョン
       ver: mysql57
+      repo: el7-7
       # インストールMySQLパッケージ
       install_products:
         - mysql-community-client

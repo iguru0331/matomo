@@ -7,7 +7,7 @@
 # MySQLリポジトリインストール
 - name: install mysql-repo
   yum:
-    name: http://dev.mysql.com/get/{{ install_mysql.ver }}-community-release-el7-7.noarch.rpm 
+    name: http://dev.mysql.com/get/{{ install_mysql.ver }}-community-release-{{ install_mysql.repo }}.noarch.rpm 
     state: present
 
 # MySQLインストール
