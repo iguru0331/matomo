@@ -10,9 +10,10 @@
   template:
     src: test.html
     dest: /var/www/html/test.html
-    owner: apache
+    owner: apacheß
     group: apache
-    mode: 0755 
+    mode: 0755
+    force: no
 
 # Apache起動、自動起動設定
 - name: start httpd

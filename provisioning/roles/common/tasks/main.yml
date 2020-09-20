@@ -4,3 +4,12 @@
     name: '*'
     update_cache: yes
     state: latest
+
+# ロケール
+- name: set locale
+  shell: localectl set-locale LANG=ja.JP.utf8
+
+# タイムゾーン
+- name: set timezone
+  timezone:
+    name: Asia/Tokyo
