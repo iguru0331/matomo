@@ -10,7 +10,7 @@
   template:
     src: test.html
     dest: /var/www/html/test.html
-    owner: apacheß
+    owner: apache
     group: apache
     mode: 0755
     force: no
