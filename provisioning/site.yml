@@ -3,6 +3,11 @@
   become: true
   user: vagrant
   vars:
+    # 共通設定
+    common:
+      # NTPサーバ
+      ntp_server: ntp.nict.jp
+
     # PHP情報
     install_php:
       # PHPバージョン
