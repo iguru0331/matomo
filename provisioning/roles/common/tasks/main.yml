@@ -17,13 +17,13 @@
 # NTPサーバ設定
 - name: upload chrony.conf
   template:
-  src: chrony.conf
-  dest: /etc/chrony.conf
-  owner: root
-  group: root
-  mode: 0544
-  force: yes
-  backup: yes
+    src: chrony.conf
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: 0544
+    force: yes
+    backup: yes
 
 # chronyd再起動
 - name: restart chronyd
