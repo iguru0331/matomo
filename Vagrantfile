@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
   end
 
   # 再起動(SELinux無効反映のため)
+  # ※プラグインのインストールが必要 : vagrant plugin install vagrant-reload
   config.vm.provision "reload"
 
 end
